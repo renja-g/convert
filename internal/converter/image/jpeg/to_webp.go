@@ -1,8 +1,8 @@
-package image
+package jpeg
 
 import (
 	"image"
-	_ "image/png" // register PNG decoder
+	_ "image/jpeg" // register JPEG decoder
 	"os"
 	"path/filepath"
 
@@ -13,12 +13,12 @@ import (
 	"github.com/spf13/pflag"
 )
 
-type pngToWebpConverter struct{}
+type jpegToWebpConverter struct{}
 
-func (c *pngToWebpConverter) From() string { return ".png" }
-func (c *pngToWebpConverter) To() string   { return ".webp" }
+func (c *jpegToWebpConverter) From() string { return ".jpeg" }
+func (c *jpegToWebpConverter) To() string   { return ".webp" }
 
-func (c *pngToWebpConverter) Convert(inputPath, outputPath string, options converter.Options) error {
+func (c *jpegToWebpConverter) Convert(inputPath, outputPath string, options converter.Options) error {
 	inputFile, err := os.Open(inputPath)
 	if err != nil {
 		return err
@@ -49,10 +49,18 @@ func (c *pngToWebpConverter) Convert(inputPath, outputPath string, options conve
 	return webp.Encode(outputFile, img, encOptions)
 }
 
-func (c *pngToWebpConverter) GetFlags() *pflag.FlagSet {
-	return pflag.NewFlagSet("png-to-webp", pflag.ExitOnError)
+func (c *jpegToWebpConverter) GetFlags() *pflag.FlagSet {
+	return pflag.NewFlagSet("jpeg-to-webp", pflag.ExitOnError)
 }
 
 func init() {
-	converter.Register(&pngToWebpConverter{})
+	converter.Register(&jpegToWebpConverter{})
+	// also register alias .jpg
+	converter.Register(&jpegToWebpConverterAliasJpg{})
 }
+
+type jpegToWebpConverterAliasJpg struct {
+	jpegToWebpConverter
+}
+
+func (c *jpegToWebpConverterAliasJpg) From() string { return ".jpg" }

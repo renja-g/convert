@@ -1,4 +1,4 @@
-package image
+package webp
 
 import (
 	"image/jpeg"
