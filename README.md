@@ -8,12 +8,16 @@ graph LR;
     subgraph Raster
         PNG;
         JPEG;
+        WEBP;
     end
 
     PNG <--> JPEG;
+    PNG <--> WEBP;
+    JPEG <--> WEBP;
 
     click PNG "https://en.wikipedia.org/wiki/Portable_Network_Graphics" "PNG Details"
     click JPEG "https://en.wikipedia.org/wiki/JPEG" "JPEG Details"
+    click WEBP "https://en.wikipedia.org/wiki/WebP" "WEBP Details"
 ```
 
 

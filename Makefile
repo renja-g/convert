@@ -5,7 +5,7 @@ BUILD_DIR=bin
 build:
 	@echo "Building ${BINARY_NAME}..."
 	@mkdir -p ${BUILD_DIR}
-	@go build -o ${BUILD_DIR}/${BINARY_NAME} ./cmd/convert
+	@CGO_LDFLAGS="-Wl,-no_warn_duplicate_libraries" go build -o ${BUILD_DIR}/${BINARY_NAME} ./cmd/convert
 	@echo "${BINARY_NAME} built in ${BUILD_DIR}"
 
 ## clean: cleans up build artifacts.
