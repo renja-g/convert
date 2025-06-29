@@ -2,6 +2,9 @@
 
 A universal file converter.
 
+<img width="1018" alt="image" src="https://github.com/user-attachments/assets/d9e6ea5e-aabe-4cb7-b426-602f81798d42" />
+
+
 Implemented formats:
 ```mermaid
 graph LR;
