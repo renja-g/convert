@@ -12,6 +12,7 @@ import (
 	// Import the image package to register the converters
 	_ "github.com/renja-g/convert/internal/converter/image"
 	"github.com/renja-g/convert/internal/detect"
+	"github.com/renja-g/convert/internal/tui"
 	"github.com/spf13/cobra"
 )
 
@@ -22,8 +23,12 @@ var rootCmd = &cobra.Command{
 	Use:   "convert [input file]",
 	Short: "A universal file converter",
 	Long:  `A universal file converter that supports various file formats.`,
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.RangeArgs(0, 1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return tui.Run()
+		}
+
 		inputFile := args[0]
 
 		mimeType, err := detect.MimeType(inputFile)
