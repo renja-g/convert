@@ -138,6 +138,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tea.KeyMsg:
+		if msg.Type == tea.KeyRunes {
+			maybePath := sanitizeDroppedPath(string(msg.Runes))
+			if filepath.IsAbs(maybePath) {
+				m.processing = true
+				m.searching = false
+				m.file = fileInfo{path: maybePath}
+				m.choice = ""
+				m.choices = nil
+				return m, checkFileCmd(maybePath)
+			}
+		}
+
 		// If we are in searching mode (typing filename)
 		if m.searching && !m.processing && !m.converting {
 			prev := m.input.Value()
@@ -195,15 +207,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 
-		// Handle file drop: bracketed paste provides a KeyRunes event.
-		if msg.Type == tea.KeyRunes {
-			path := strings.TrimSpace(string(msg.Runes))
-			m.processing = true
-			m.file = fileInfo{path: path}
-			m.choice = ""
-			m.choices = nil
-			return m, checkFileCmd(path)
-		}
 		return m, nil
 
 	case fileInfoMsg:
@@ -386,4 +389,22 @@ func searchFiles(query string) []string {
 		return nil
 	})
 	return matches
+}
+
+func sanitizeDroppedPath(raw string) string {
+	raw = strings.TrimSpace(raw)
+
+	raw = strings.TrimPrefix(raw, "file://")
+
+	// Strip surrounding single or double quotes
+	if len(raw) >= 2 {
+		if (raw[0] == '\'' && raw[len(raw)-1] == '\'') || (raw[0] == '"' && raw[len(raw)-1] == '"') {
+			raw = raw[1 : len(raw)-1]
+		}
+	}
+
+	// Unescape space characters ("\\ " -> " ")
+	raw = strings.ReplaceAll(raw, "\\ ", " ")
+
+	return raw
 }
